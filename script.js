@@ -8,6 +8,19 @@ class Expenses {
         this.drescription = drescription;
         this.moneyValue = moneyValue;
     }
+
+    dataValidate() {
+
+        for (let i in this) {
+
+            if (this[i] == undefined || this[i] == '' || this[i] == null) {
+                return false;
+            }
+
+            return true;
+                
+        }
+    }
 };
 
 //Objeto Data Base
@@ -59,7 +72,31 @@ function expensesRegister() {
         drescription.value,
         moneyValue.value
     );
+    
+    if(expenses.dataValidate()) {
+        //Enviar values para o Local Storage
+        //db.sendToLocalStorage(expenses);
 
-    //Enviar values para o Local Storage
-    db.sendToLocalStorage(expenses);
+        //Mudar o modal dinamicamente
+        document.getElementById('modal_titulo').innerHTML = 'Registro inserido com sucesso.';
+        document.getElementById('modal_titulo_div').className = 'modal-header text-success';
+        document.getElementById('modal_conteudo').innerHTML = 'Despesa cadastrada com sucesso.';
+        document.getElementById('modal_btn').innerHTML = 'Voltar';
+        document.getElementById('modal_btn').className = 'btn btn-success';
+        
+        //dialog de sucesso
+        $('#modalRegistraDespesa').modal('show');
+
+    }else {
+        //Mudar o modal dinamicamente
+        document.getElementById('modal_titulo').innerHTML = 'Erro na inclusão do registro';
+        document.getElementById('modal_titulo_div').className = 'modal-header text-danger';
+        document.getElementById('modal_conteudo').innerHTML = 'Verifique se os campos foram preenchidos corretamente.';
+        document.getElementById('modal_btn').innerHTML = 'Voltar';
+        document.getElementById('modal_btn').className = 'btn btn-danger';
+
+        //dialog de erro
+        $('#modalRegistraDespesa').modal('show');
+    }
+    
 }
