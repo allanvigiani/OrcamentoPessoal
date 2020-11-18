@@ -44,12 +44,34 @@ class Db {
 
     sendToLocalStorage(exp) {
         //Adicionar no Local Storage
-        let id = this.getNextId()
+        let id = this.getNextId();
 
         localStorage.setItem(id, JSON.stringify(exp));
         //setItem => inserir um dado no Local Storage
 
-        localStorage.setItem('id', id)
+        localStorage.setItem('id', id);
+    }
+
+    recoverExpenses() {
+        //Array de despesas
+        let expenses = Array();
+
+
+        let id = localStorage.getItem('id');
+        //Recuperar despesas do Local Storage pelo índice
+        for (let i = 1; i <= id; i++) {
+            //recuperar a despesa
+            let expense = JSON.parse(localStorage.getItem(i));
+
+            //Índices removidos/ pular índice removido
+            if (expense === null) {
+                continue;
+            }
+            //Adiciona despesa no Array
+            expenses.push(expense);
+        }
+
+        return expenses
     }
 };
 
@@ -75,7 +97,7 @@ function expensesRegister() {
     
     if(expenses.dataValidate()) {
         //Enviar values para o Local Storage
-        //db.sendToLocalStorage(expenses);
+        db.sendToLocalStorage(expenses);
 
         //Mudar o modal dinamicamente
         document.getElementById('modal_titulo').innerHTML = 'Registro inserido com sucesso.';
@@ -87,7 +109,15 @@ function expensesRegister() {
         //dialog de sucesso
         $('#modalRegistraDespesa').modal('show');
 
-    }else {
+        //Limpar campos
+        year.value = ''
+        month.value  = ''
+        day.value = ''
+        type.value = ''
+        drescription.value = ''
+        moneyValue.value = ''
+
+    } else {
         //Mudar o modal dinamicamente
         document.getElementById('modal_titulo').innerHTML = 'Erro na inclusão do registro';
         document.getElementById('modal_titulo_div').className = 'modal-header text-danger';
@@ -99,4 +129,45 @@ function expensesRegister() {
         $('#modalRegistraDespesa').modal('show');
     }
     
+}
+
+//Carregar a lista de despesas
+function expensesList() {
+    let expenses = Array();
+
+    expenses = db.recoverExpenses();
+
+    //selecionando o tbody da tabela HTML
+    let expensesList = document.getElementById('listaDespesas');
+
+    //percorrer o Array despesas
+    expenses.forEach(exp => {
+        //Criando o TR
+        let row = expensesList.insertRow();
+        //Criando o Td
+        row.insertCell(0).innerHTML = `${exp.day}/${exp.month}/${exp.year}`;
+
+        //Ajudar tipo
+        switch (exp.type) {
+            case '1':
+                exp.type = 'Alimentação'
+            break;
+            case '2':
+                exp.type = 'Educação'
+            break;
+            case '3':
+                exp.type = 'Lazer'
+            break;
+            case '4':
+                exp.type = 'Saúde'
+            break;
+            case '5':
+                exp.type = 'Transporte'
+            break;
+        }
+
+        row.insertCell(1).innerHTML = exp.type;
+        row.insertCell(2).innerHTML = exp.drescription;
+        row.insertCell(3).innerHTML = exp.moneyValue;
+    })
 }
