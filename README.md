@@ -2,18 +2,13 @@
 <div align="center"><img src="http://img.shields.io/static/v1?label=STATUS&message=CONCLUIDO&color=green&style=for-the-badge"></div>
 <br>
 
-# instagram-login-clone
-instagram-login-clone é um clona da tela de login do Instragram desktop com responsividade para dispositivos mobile.
+# Orçamento Pessoal
+O orçamento pessoal é um sistema que permite criar, pesquisar e excluir despesas de determinado dia, ano, mês, tipo ou valor.
 
 
 ## Índice
 * [Tech](#tecnologias)
 * [Screenshots](#screenshots)
-
-## Sobre o projeto
-
-<a href="https://allanvigiani.github.io/instagram-login-clone/">Clique aqui</a> para ver o projeto.
-
 	
 ## Tecnologias
 - HTML5
