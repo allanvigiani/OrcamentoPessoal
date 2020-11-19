@@ -56,7 +56,6 @@ class Db {
         //Array de despesas
         let expenses = Array();
 
-
         let id = localStorage.getItem('id');
         //Recuperar despesas do Local Storage pelo índice
         for (let i = 1; i <= id; i++) {
@@ -67,11 +66,55 @@ class Db {
             if (expense === null) {
                 continue;
             }
+            //Adiciona o atributo id nos objetos
+            expense.id = i;
             //Adiciona despesa no Array
             expenses.push(expense);
         }
 
         return expenses
+    }
+
+    search(expense) {
+        let filteredExpenses = Array();
+        filteredExpenses = this.recoverExpenses();
+
+        //Filtrar requisitos
+        //ano
+        if (expense.year != '') {
+            filteredExpenses = filteredExpenses.filter(exp => exp.year == expense.year);
+        }
+        
+        //mes
+        if (expense.month != '') {
+            filteredExpenses = filteredExpenses.filter(exp => exp.month == expense.month);
+        }
+
+        //dia
+        if (expense.day != '') {
+            filteredExpenses = filteredExpenses.filter(exp => exp.day == expense.day);
+        }
+
+        //tipo
+        if (expense.type != '') {
+            filteredExpenses = filteredExpenses.filter(exp => exp.type == expense.type);
+        }
+
+        //descricao
+        if (expense.drescription != '') {
+            filteredExpenses = filteredExpenses.filter(exp => exp.drescription == expense.drescription);
+        }
+
+        //valor
+        if (expense.moneyValue != '') {
+            filteredExpenses = filteredExpenses.filter(exp => exp.moneyValue == expense.moneyValue);
+        }
+
+        return filteredExpenses;
+    }
+
+    remove(id) {
+        localStorage.removeItem(id);
     }
 };
 
@@ -132,13 +175,15 @@ function expensesRegister() {
 }
 
 //Carregar a lista de despesas
-function expensesList() {
-    let expenses = Array();
+function expensesList(expenses = Array(), filter = false) {
 
-    expenses = db.recoverExpenses();
+    if(expenses.length == 0 && filter == false) {
+        expenses = db.recoverExpenses();
+    }
 
     //selecionando o tbody da tabela HTML
     let expensesList = document.getElementById('listaDespesas');
+    expensesList.innerHTML = '';
 
     //percorrer o Array despesas
     expenses.forEach(exp => {
@@ -169,5 +214,35 @@ function expensesList() {
         row.insertCell(1).innerHTML = exp.type;
         row.insertCell(2).innerHTML = exp.drescription;
         row.insertCell(3).innerHTML = exp.moneyValue;
+
+        //criar botão de remover despesa
+        let btn = document.createElement('button');
+        btn.className = 'btn btn-danger';
+        btn.innerHTML = '<i class = "fas fa-times"></i>';
+        btn.id = `id_despesa_${exp.id}`;
+        //remover
+        btn.onclick = function() {
+            let id = this.id.replace('id_despesa_', '');
+            db.remove(id);
+            window.location.reload();
+        }
+        row.insertCell(4).append(btn);
     })
+}
+
+function searchExpense() {
+    //Valores dos campos
+    let year = document.getElementById('ano').value;
+    let month = document.getElementById('mes').value;
+    let day = document.getElementById('dia').value;
+    let type = document.getElementById('tipo').value;
+    let drescription = document.getElementById('descricao').value;
+    let moneyValue = document.getElementById('valor').value;
+
+    let expense = new Expenses(year, month, day, type, drescription, moneyValue);
+
+    //Recuperar valores
+    let expenses = db.search(expense);
+
+    expensesList(expenses, true);
 }
